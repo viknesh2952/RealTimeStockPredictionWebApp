@@ -1,0 +1,9 @@
+<br><br><br>
+<div class="container" style="height: 500px">
+	<button type="button" class="btn btn-primary" (click)="getStocks()">Stocks</button>
+	<button type="button" class="btn btn-info" (click)="getExchanges()">Exchanges</button>
+	<button type="button" class="btn btn-success" (click)="getIndices()">Indices</button>
+	<ag-grid-angular style="width: auto; height: 500px;" class="ag-theme-alpine" [rowData]="rowData"
+		[columnDefs]="columnDefs">
+	</ag-grid-angular>
+</div>

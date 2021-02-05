@@ -19,8 +19,10 @@ body {
   padding: 0;
   box-sizing: border-box;
   font-family: "Quicksand", sans-serif;
-  font-size: 50%;
   /* font-size: 10px; */
+}
+.container {
+  margin-bottom: 100px;
 }
 /*-- Inspiration taken from abdo steif -->
 /* --> https://codepen.io/abdosteif/pen/bRoyMb?editors=1100*/
@@ -46,7 +48,7 @@ body {
 .nav div.logo a {
   text-decoration: none;
   color: #fff;
-  font-size: 2.5rem;
+  font-size: 1.8rem;
 }
 
 .nav div.logo a:hover {
@@ -71,14 +73,14 @@ body {
   width: auto;
   height: 65px;
   padding: 0;
-  padding-right: 3rem;
+  padding-right: 1.5rem;
 }
 
 .nav div.main_list ul li a {
   text-decoration: none;
   color: #fff;
   line-height: 65px;
-  font-size: 2rem;
+  font-size: 1rem;
 }
 
 .nav div.main_list ul li a:hover {
@@ -367,4 +369,7 @@ body {
   padding: 0;
   background: url("https://glimageurl.golocall.com/golocal-post/image/436241_ifmtradingacademy_1607337502.jpeg");
   /* background-color: #111; */
+}
+.btn {
+  margin: 10px;
 }

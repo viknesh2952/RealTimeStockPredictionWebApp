@@ -13,4 +13,7 @@ export class ApiService {
       "https://api.twelvedata.com/exchanges?type=stock&source=account"
     );
   }
+  getIndicesList() {
+    return this.http.get("https://api.twelvedata.com/indices?source=account");
+  }
 }
