@@ -1,5 +1,8 @@
 import { Component, OnInit } from "@angular/core";
 import { ApiService } from "../api.service";
+import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
+import { MenuModule } from "@ag-grid-enterprise/menu";
+import { ColumnsToolPanelModule } from "@ag-grid-enterprise/column-tool-panel";
 
 @Component({
   selector: "app-stocks",
@@ -8,8 +11,35 @@ import { ApiService } from "../api.service";
 })
 export class StocksComponent implements OnInit {
   rowData;
+  gridOptions = {
+    columnDefs: "columnDefs",
+    rowData: "rowData",
+    rowSelection: "multiple",
+    defaultColDef: "defaultColDef",
+    colResizeDefault: "colResizeDefault"
+  };
+  public modules: any[] = [
+    ClientSideRowModelModule,
+    MenuModule,
+    ColumnsToolPanelModule
+  ];
   columnDefs = [];
-  constructor(private api: ApiService) {}
+  colResizeDefault;
+  defaultColDef: {
+    resizable: boolean;
+    filter: boolean;
+    floatingFilter: boolean;
+    sortable: boolean;
+  };
+  constructor(private api: ApiService) {
+    this.colResizeDefault = "shift";
+    this.defaultColDef = {
+      resizable: true,
+      filter: true,
+      floatingFilter: true,
+      sortable: true
+    };
+  }
   ngOnInit() {
     this.columnDefs = [
       { field: "code" },

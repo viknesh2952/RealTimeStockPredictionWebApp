@@ -5,12 +5,13 @@ import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
 import { AppComponent } from "./app.component";
 import { HelloComponent } from "./hello.component";
 import { AgGridModule } from "ag-grid-angular";
+import "ag-grid-enterprise";
 import { ApiService } from "./api.service";
 import { HttpClientModule } from "@angular/common/http";
 import { AppRoutingModule } from "./app-routing.module";
 import { NotfoundComponent } from "./notfound/notfound.component";
-import { HomeComponent } from './home/home.component';
-import { StocksComponent } from './stocks/stocks.component';
+import { HomeComponent } from "./home/home.component";
+import { StocksComponent } from "./stocks/stocks.component";
 
 @NgModule({
   imports: [
@@ -21,7 +22,13 @@ import { StocksComponent } from './stocks/stocks.component';
     AgGridModule.withComponents([]),
     HttpClientModule
   ],
-  declarations: [AppComponent, HelloComponent, NotfoundComponent, HomeComponent, StocksComponent],
+  declarations: [
+    AppComponent,
+    HelloComponent,
+    NotfoundComponent,
+    HomeComponent,
+    StocksComponent
+  ],
   bootstrap: [AppComponent],
   providers: [ApiService]
 })

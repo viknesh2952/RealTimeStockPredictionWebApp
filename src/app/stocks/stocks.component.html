@@ -4,6 +4,7 @@
 	<button type="button" class="btn btn-info" (click)="getExchanges()">Exchanges</button>
 	<button type="button" class="btn btn-success" (click)="getIndices()">Indices</button>
 	<ag-grid-angular style="width: auto; height: 500px;" class="ag-theme-alpine" [rowData]="rowData"
-		[columnDefs]="columnDefs">
+		[columnDefs]="columnDefs" [defaultColDef]="defaultColDef" [colResizeDefault]="colResizeDefault"
+		[enableRangeSelection]="true">
 	</ag-grid-angular>
 </div>
