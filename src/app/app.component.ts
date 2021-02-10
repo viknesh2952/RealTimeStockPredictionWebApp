@@ -1,5 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import $ from "jquery";
+
 @Component({
   selector: "my-app",
   templateUrl: "./app.component.html",
@@ -8,6 +9,8 @@ import $ from "jquery";
 export class AppComponent implements OnInit {
   menu = "home";
   constructor() {}
+
+
   route(menuname) {
     this.menu = menuname;
     if (this.menu != "Home") {

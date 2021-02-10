@@ -1,6 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { ApiService } from "../api.service";
-import { Chart } from "angular-highcharts";
+import * as Highcharts from "highcharts/highstock";
 @Component({
   selector: "app-home",
   templateUrl: "./home.component.html",
@@ -8,31 +8,20 @@ import { Chart } from "angular-highcharts";
 })
 export class HomeComponent implements OnInit {
   constructor(private api: ApiService) {}
-  chart = new Chart({
-    chart: {
-      type: "line"
-    },
-    title: {
-      text: "Linechart"
-    },
-    credits: {
-      enabled: false
-    },
+  Highcharts: typeof Highcharts = Highcharts;
+
+  chartOptions: Highcharts.Options = {
     series: [
       {
-        name: "Line 1",
-        data: [1, 2, 3]
+        type: "line",
+        pointInterval: 24 * 3600 * 1000,
+        data: [1, 21, 5, 4, 25]
       }
     ]
-  });
-
-  // add point to chart serie
-  add() {
-    this.chart.addPoint(Math.floor(Math.random() * 10));
-  }
+  };
   ngOnInit() {
-    this.api.getHomeChart().subscribe((data: any) => {
-      console.log(data);
-    });
+    // this.api.getHomeChart().subscribe((data: any) => {
+    //   console.log(data);
+    // });
   }
 }

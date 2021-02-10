@@ -1,13 +1,13 @@
 <section class="home">
-  <div class="main-content">
-    <div class="main-heading">
-      <b>Stock Prediction</b> is the act of trying to determine the future value
-      of a company stock or other financial instrument traded on an exchange.
-      The successful prediction of a stock's future price could yield
-      significant profit
-    </div>
-  </div>
+	<div class="main-content">
+		<div class="main-heading">
+			<b>Stock Prediction</b> is the act of trying to determine the future value
+			of a company stock or other financial instrument traded on an exchange.
+			The successful prediction of a stock's future price could yield
+			significant profit
+		</div>
+	</div>
 </section>
 chart
-<button (click)="add()">Add Point!</button>
-    <div [chart]="chart"></div>
+<highcharts-chart [Highcharts]="Highcharts" [constructorType]="'stockChart'" [options]="chartOptions">
+</highcharts-chart>

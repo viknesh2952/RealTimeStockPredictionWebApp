@@ -12,9 +12,7 @@ import { AppRoutingModule } from "./app-routing.module";
 import { NotfoundComponent } from "./notfound/notfound.component";
 import { HomeComponent } from "./home/home.component";
 import { StocksComponent } from "./stocks/stocks.component";
-
-import { ChartModule } from "angular-highcharts";
-
+import { HighchartsChartModule } from "highcharts-angular";
 @NgModule({
   imports: [
     BrowserModule,
@@ -23,7 +21,7 @@ import { ChartModule } from "angular-highcharts";
     NgbModule,
     AgGridModule.withComponents([]),
     HttpClientModule,
-    ChartModule
+    HighchartsChartModule
   ],
   declarations: [
     AppComponent,
