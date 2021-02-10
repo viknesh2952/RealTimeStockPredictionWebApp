@@ -15,7 +15,18 @@ export class HomeComponent implements OnInit {
       {
         type: "line",
         pointInterval: 24 * 3600 * 1000,
-        data: [1, 21, 5, 4, 25]
+        data: [
+          /* Jan 2011 */
+          1,
+          64,
+          21,
+          5,
+          4,
+          13,
+          62,
+          11,
+          25
+        ]
       }
     ]
   };
