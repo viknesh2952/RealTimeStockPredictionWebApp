@@ -13,14 +13,8 @@ import { NotfoundComponent } from "./notfound/notfound.component";
 import { HomeComponent } from "./home/home.component";
 import { StocksComponent } from "./stocks/stocks.component";
 
-import { ChartModule, HIGHCHARTS_MODULES } from 'angular-highcharts';
-import stock from 'highcharts/modules/stock.src';
-import more from 'highcharts/highcharts-more.src';
+import { ChartModule } from "angular-highcharts";
 
-export function highchartsModules() {
-  // apply Highcharts Modules to this array
-  return [stock, more];
-}
 @NgModule({
   imports: [
     BrowserModule,
@@ -28,7 +22,8 @@ export function highchartsModules() {
     FormsModule,
     NgbModule,
     AgGridModule.withComponents([]),
-    HttpClientModule,ChartModule
+    HttpClientModule,
+    ChartModule
   ],
   declarations: [
     AppComponent,
@@ -38,7 +33,6 @@ export function highchartsModules() {
     StocksComponent
   ],
   bootstrap: [AppComponent],
-  providers: [ApiService,
-    { provide: HIGHCHARTS_MODULES, useFactory: highchartsModules }]
+  providers: [ApiService]
 })
 export class AppModule {}
