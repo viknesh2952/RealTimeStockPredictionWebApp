@@ -12,7 +12,7 @@ import { AppRoutingModule } from "./app-routing.module";
 import { NotfoundComponent } from "./notfound/notfound.component";
 import { HomeComponent } from "./home/home.component";
 import { StocksComponent } from "./stocks/stocks.component";
-
+import { HighchartsChartComponent } from "highcharts-angular";
 @NgModule({
   imports: [
     BrowserModule,
@@ -27,7 +27,8 @@ import { StocksComponent } from "./stocks/stocks.component";
     HelloComponent,
     NotfoundComponent,
     HomeComponent,
-    StocksComponent
+    StocksComponent,
+    // HighchartsChartComponent
   ],
   bootstrap: [AppComponent],
   providers: [ApiService]

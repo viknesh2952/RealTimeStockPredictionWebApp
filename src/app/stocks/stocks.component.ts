@@ -11,6 +11,7 @@ import { ColumnsToolPanelModule } from "@ag-grid-enterprise/column-tool-panel";
 })
 export class StocksComponent implements OnInit {
   rowData;
+  table = "Exchanges";
   gridOptions = {
     columnDefs: "columnDefs",
     rowData: "rowData",
@@ -66,6 +67,7 @@ export class StocksComponent implements OnInit {
       console.log(data);
       this.rowData = data.data;
     });
+    this.table = "Stocks";
   }
   getExchanges() {
     this.columnDefs = [];
@@ -79,6 +81,7 @@ export class StocksComponent implements OnInit {
       console.log(data);
       this.rowData = data.data;
     });
+    this.table = "Exchanges";
   }
   getIndices() {
     this.columnDefs = [];
@@ -92,5 +95,6 @@ export class StocksComponent implements OnInit {
       console.log(data);
       this.rowData = data.data;
     });
+    this.table = "Indices";
   }
 }
