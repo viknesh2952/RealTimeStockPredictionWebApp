@@ -10,6 +10,14 @@
     Indices
   </button>
   <span style="margin-left:15%;">{{table}}</span>
+  <highcharts-chart
+    [Highcharts]="Highcharts"
+    [constructorType]="'stockChart'"
+    [options]="chartOptions"
+    [(update)]="updateFlag"
+  >
+  </highcharts-chart>
+
   <ag-grid-angular
     style="width: auto; height: 450px;"
     class="ag-theme-alpine"

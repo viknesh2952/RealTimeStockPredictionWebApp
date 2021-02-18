@@ -3,13 +3,15 @@ import { ApiService } from "../api.service";
 import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
 import { MenuModule } from "@ag-grid-enterprise/menu";
 import { ColumnsToolPanelModule } from "@ag-grid-enterprise/column-tool-panel";
-
+import * as Highcharts from "highcharts/highstock";
 @Component({
   selector: "app-stocks",
   templateUrl: "./stocks.component.html",
   styleUrls: ["./stocks.component.css"]
 })
 export class StocksComponent implements OnInit {
+  updateFlag = false;
+  data = [];
   rowData;
   table = "Exchanges";
   gridOptions = {
@@ -41,7 +43,48 @@ export class StocksComponent implements OnInit {
       sortable: true
     };
   }
+  Highcharts: typeof Highcharts = Highcharts;
+  chartOptions: Highcharts.Options = {
+    title: {
+      text: "Live Stocks"
+    },
+    xAxis: {
+      type: "datetime"
+    },
+    yAxis: {
+      title: {
+        text: "Close Value"
+      }
+    },
+    series: [
+      {
+        type: "area",
+        pointInterval: 24 * 3600 * 1000,
+        pointStart: Date.UTC(2020, 0, 1),
+        data: this.data
+      }
+    ]
+  };
+  handleUpdate() {
+    this.chartOptions.title = {
+      text: "AAPL Stocks"
+    };
+    this.api.getChart("AAPL", "1day").subscribe((data: any) => {
+      console.log(data);
+      for (let i = 0; i < data.values.length; i++) {
+        this.data.push(Number(data.values[i].close));
+      }
+      setTimeout(() => {
+        this.chartOptions.series[0] = {
+          type: "area",
+          data: this.data
+        };
+        this.updateFlag = true;
+      }, 500);
+    });
+  }
   ngOnInit() {
+    this.handleUpdate();
     this.columnDefs = [
       { field: "code" },
       { field: "country" },

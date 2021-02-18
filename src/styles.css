@@ -373,3 +373,8 @@ body {
 .btn {
   margin: 10px;
 }
+highcharts-chart {
+  display: block;
+  width: 100%;
+  height: 70%;
+}

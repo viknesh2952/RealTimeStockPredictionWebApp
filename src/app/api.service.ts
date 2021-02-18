@@ -18,9 +18,9 @@ export class ApiService {
   getIndicesList() {
     return this.http.get("https://api.twelvedata.com/indices?source=account");
   }
-  getHomeChart() {
+  getChart(stock, duration) {
     return this.http.get(
-      `${this.link}?symbol=AAPL&interval=1day&apikey=${this.apikey}`
+      `${this.link}?symbol=${stock}&interval=${duration}&apikey=${this.apikey}`
     );
   }
 }

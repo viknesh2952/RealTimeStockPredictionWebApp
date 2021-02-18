@@ -8,7 +8,7 @@ import * as Highcharts from "highcharts/highstock";
 })
 export class HomeComponent implements OnInit {
   updateFlag = false;
-  data = [1];
+  data = [];
   constructor(private api: ApiService) {}
   Highcharts: typeof Highcharts = Highcharts;
   chartOptions: Highcharts.Options = {
@@ -37,7 +37,7 @@ export class HomeComponent implements OnInit {
     this.chartOptions.title = {
       text: "AAPL Stocks"
     };
-    this.api.getHomeChart().subscribe((data: any) => {
+    this.api.getChart("AAPL", "1day").subscribe((data: any) => {
       console.log(data);
       for (let i = 0; i < data.values.length; i++) {
         this.data.push(Number(data.values[i].close));
