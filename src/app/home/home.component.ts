@@ -7,18 +7,20 @@ import * as Highcharts from "highcharts/highstock";
   styleUrls: ["./home.component.css"]
 })
 export class HomeComponent implements OnInit {
+  updateFlag = false;
+  data = [1];
   constructor(private api: ApiService) {}
   Highcharts: typeof Highcharts = Highcharts;
   chartOptions: Highcharts.Options = {
     title: {
-      text: "Fruit Consumption"
+      text: "Live Stocks"
     },
     xAxis: {
       type: "datetime"
     },
     yAxis: {
       title: {
-        text: "Fruit eaten"
+        text: "Close Value"
       }
     },
     series: [
@@ -26,27 +28,30 @@ export class HomeComponent implements OnInit {
         type: "area",
         pointInterval: 24 * 3600 * 1000,
         pointStart: Date.UTC(2020, 0, 1),
-        data: [
-          29.9,
-          71.5,
-          106.4,
-          129.2,
-          144.0,
-          176.0,
-          135.6,
-          148.5,
-          216.4,
-          194.1,
-          95.6,
-          54.4
-        ]
+        data: this.data
       }
     ]
   };
 
+  handleUpdate() {
+    this.chartOptions.title = {
+      text: "AAPL Stocks"
+    };
+    this.api.getHomeChart().subscribe((data: any) => {
+      console.log(data);
+      for (let i = 0; i < data.values.length; i++) {
+        this.data.push(Number(data.values[i].close));
+      }
+      setTimeout(() => {
+        this.chartOptions.series[0] = {
+          type: "area",
+          data: this.data
+        };
+        this.updateFlag = true;
+      }, 500);
+    });
+  }
   ngOnInit() {
-    // this.api.getHomeChart().subscribe((data: any) => {
-    //   console.log(data);
-    // });
+    this.handleUpdate();
   }
 }

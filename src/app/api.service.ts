@@ -20,7 +20,7 @@ export class ApiService {
   }
   getHomeChart() {
     return this.http.get(
-      `${this.link}?symbol=AAPL&interval=1min&apikey=${this.apikey}`
+      `${this.link}?symbol=AAPL&interval=1day&apikey=${this.apikey}`
     );
   }
 }
