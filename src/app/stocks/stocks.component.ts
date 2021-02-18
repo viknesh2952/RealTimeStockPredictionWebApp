@@ -66,11 +66,15 @@ export class StocksComponent implements OnInit {
     ]
   };
   handleUpdate() {
-    this.chartOptions.title = {
-      text: "AAPL Stocks"
-    };
-    this.api.getChart("AAPL", "1day").subscribe((data: any) => {
+    this.api.getChart("ALEAF", "1day").subscribe((data: any) => {
       console.log(data);
+      this.chartOptions.title = {
+        text:
+          data.meta.symbol + " Stocks  - " + data.meta.exchange + " Exchange"
+      };
+      this.chartOptions.yAxis = {
+        title: { text: "Close Value in " + data.meta.currency }
+      };
       for (let i = 0; i < data.values.length; i++) {
         this.data.push(Number(data.values[i].close));
       }
