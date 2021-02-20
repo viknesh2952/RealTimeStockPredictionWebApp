@@ -1,31 +1,22 @@
 <br /><br /><br />
 <div class="container" style="height: 500px">
-  <button type="button" class="btn btn-primary" (click)="getStocks()">
+	<button type="button" class="btn btn-primary" (click)="getStocks()">
     Stocks
   </button>
-  <button type="button" class="btn btn-info" (click)="getExchanges()">
+	<button type="button" class="btn btn-info" (click)="getExchanges()">
     Exchanges
   </button>
-  <button type="button" class="btn btn-success" (click)="getIndices()">
+	<button type="button" class="btn btn-success" (click)="getIndices()">
     Indices
   </button>
-  <span style="margin-left:15%;">{{table}}</span>
-  <highcharts-chart
-    [Highcharts]="Highcharts"
-    [constructorType]="'stockChart'"
-    [options]="chartOptions"
-    [(update)]="updateFlag"
-  >
-  </highcharts-chart>
-
-  <ag-grid-angular
-    style="width: auto; height: 450px;"
-    class="ag-theme-alpine"
-    [rowData]="rowData"
-    [columnDefs]="columnDefs"
-    [defaultColDef]="defaultColDef"
-    [colResizeDefault]="colResizeDefault"
-    [enableRangeSelection]="true"
-  >
-  </ag-grid-angular>
+	<h3 style="margin-left:45%;">{{table}}
+		<span><button class="btn btn-dark" (click)="Plot()" *ngIf="enableplot">Plot</button></span></h3>
+	<ag-grid-angular #agGrid style="width: auto; height: 450px;" class="ag-theme-alpine" rowSelection="single"
+		[rowData]="rowData" [columnDefs]="columnDefs" [defaultColDef]="defaultColDef"
+		[colResizeDefault]="colResizeDefault" [enableRangeSelection]="true" [pagination]="true"
+		[paginationAutoPageSize]="true">
+	</ag-grid-angular>
+	<highcharts-chart [Highcharts]="Highcharts" [constructorType]="'stockChart'" [options]="chartOptions"
+		[(update)]="updateFlag">
+	</highcharts-chart>
 </div>
