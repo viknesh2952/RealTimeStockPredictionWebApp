@@ -100,8 +100,37 @@ export class StocksComponent implements OnInit {
       };
       var daylist = getDaysArray(new Date(min), new Date(max));
       parsedDate.push(daylist.map(v => v.toISOString().slice(0, 10)));
+      var dc = 0;
       for (let i = 0; i < data.values.length; i++) {
-        console.log(i + "," + data.values[i].datetime);
+        // console.log(
+        //   i + "," + parsedDate[0][parsedDate[0].length - i - 1],
+        //   data.values[i].datetime
+        // );
+        // var chk = parsedDate[0][dc].split("-");
+        // var diffsplit = data.values[i].datetime.split("-");
+        // var diff = chk[2] - diffsplit[2];
+        //////////
+        var date1 = new Date(parsedDate[0][parsedDate[0].length - i - 1]);
+        var date2 = new Date(data.values[i].datetime);
+        var Difference_In_Time = date1.getTime() - date2.getTime();
+        var Difference_In_Days = Difference_In_Time / (1000 * 3600 * 24);
+        console.log(
+          "Total number of days between dates" +
+            date1 +
+            "and " +
+            date2 +
+            " is:" +
+            Difference_In_Days
+        );
+        //////////
+        // if (diff == 0) {
+        //   this.data.push(data.values[i].close);
+        // } else {
+        //   for (let j = 1; j <= diff; j++) {
+        //     this.data.push(Number(0));
+        //   }
+        // }
+        dc = dc + 1;
       }
       //////last
 
