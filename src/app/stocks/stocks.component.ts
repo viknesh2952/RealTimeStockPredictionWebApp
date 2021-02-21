@@ -82,43 +82,74 @@ export class StocksComponent implements OnInit {
       this.chartOptions.yAxis = {
         title: { text: "Close Value in " + data.meta.currency }
       };
+      ////////////////last
+
+      var l = data.values.length - 1;
+      var min = data.values[l].datetime;
+      var max = data.values[0].datetime;
+      var parsedDate = [];
+      var getDaysArray = function(start, end) {
+        for (
+          var arr = [], dt = new Date(start);
+          dt <= end;
+          dt.setDate(dt.getDate() + 1)
+        ) {
+          arr.push(new Date(dt));
+        }
+        return arr;
+      };
+      var daylist = getDaysArray(new Date(min), new Date(max));
+      parsedDate.push(daylist.map(v => v.toISOString().slice(0, 10)));
       for (let i = 0; i < data.values.length; i++) {
-        this.data.push(Number(data.values[i].close));
+        console.log(i + "," + data.values[i].datetime);
       }
+      //////last
+
+      // for (let i = 0; i < data.values.length; i++) {
+      //   this.data.push(Number(data.values[i].close));
+      // }
       var l = data.values.length - 1;
       var date = data.values[l].datetime.split("-");
       date[1] = date[1] - 1;
       /////////
-      var mod = [];
-      var d = date[1] + 1;
-      for (let i = 0; i < data.values.length; i++) {
-        switch (d) {
-          case 1:
-            console.log("January");
-          case 2:
-            console.log("February");
-          case 3:
+      // this.data.push(Number(data.values[0].close));
+      // for (let i = 1; i < data.values.length; i++) {
+      //   var dt = data.values[i].datetime.split("-");
+      //   var dt1 = data.values[i - 1].datetime.split("-");
+      //   if (dt[2] - dt1[2] != 1) {
+      //     switch (dt[1]) {
+      //       case 1:
+      //         if (dt[2] >= 1 && dt[2] <= 31) {
+      //           this.data.push(0);
+      //         }
+      //         console.log("January");
+      //         break;
+      //       case 2:
+      //         console.log("February");
+      //       case 3:
 
-          case 4:
+      //       case 4:
 
-          case 5:
+      //       case 5:
 
-          case 6:
+      //       case 6:
 
-          case 7:
+      //       case 7:
 
-          case 8:
+      //       case 8:
 
-          case 9:
+      //       case 9:
 
-          case 10:
+      //       case 10:
 
-          case 11:
+      //       case 11:
 
-          case 12:
-        }
-        mod.push(Number(data.values[i].close));
-      }
+      //       case 12:
+      //     }
+      //   } else {
+      //     this.data.push(Number(data.values[i].close));
+      //   }
+      // }
       /////////
       setTimeout(() => {
         this.chartOptions.series[0] = {
