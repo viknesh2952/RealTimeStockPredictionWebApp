@@ -163,6 +163,7 @@ export class StocksComponent implements OnInit {
         // console.log(data.values[i].close, this.data[i]);
       }
       //////last
+      ///note the last value from the data is not pushed to the diagram
       var l = data.values.length - 1;
       var date = data.values[l].datetime.split("-");
       date[1] = date[1] - 1;
@@ -193,14 +194,15 @@ export class StocksComponent implements OnInit {
     }
     this.smoothingValue = 2 / (timeperiod + 1);
     //EMA=(closing price − previous day’s EMA)× smoothing constant as a decimal + previous day’s EMA
-    var result = [];
-    for (let i = this.orgLen - 1 - timeperiod; i >= 0; i--) {
+    var result = [this.predictedValue];
+    var dl = this.data.length - 1;
+    for (let i = dl - timeperiod; i >= 0; i--) {
       var EMA =
-        (this.orgData.values[i].close - this.LastEMA) * this.smoothingValue +
-        this.LastEMA;
+        (this.data[i] - this.LastEMA) * this.smoothingValue + this.LastEMA;
       this.LastEMA = EMA;
       result.push(this.LastEMA);
     }
+    result = result.reverse();
     console.log(result);
   }
   ngOnInit() {
