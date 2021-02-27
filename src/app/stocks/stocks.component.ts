@@ -37,6 +37,12 @@ export class StocksComponent implements OnInit {
     floatingFilter: boolean;
     sortable: boolean;
   };
+  predictedValue;
+  smoothingValue;
+  predDate: any;
+  LastEMA: any;
+  orgLen: any;
+  orgData: any;
   constructor(private api: ApiService) {
     this.colResizeDefault = "shift";
     this.defaultColDef = {
@@ -64,13 +70,43 @@ export class StocksComponent implements OnInit {
         type: "area",
         pointInterval: 24 * 3600 * 1000,
         pointStart: Date.UTC(2020, 0, 1),
+        marker: {
+          fillColor: "blue",
+          lineColor: Highcharts.getOptions().colors[1]
+        },
         data: this.data
       }
+      // ,
+      // {
+      //   type: "area",
+      //   pointInterval: 24 * 3600 * 1000,
+      //   pointStart: Date.UTC(2020, 0, 1),
+      //   marker: {
+      //     fillColor: "red",
+      //     lineColor: Highcharts.getOptions().colors[2]
+      //   },
+      //   data: [
+      //     7.0,
+      //     6.9,
+      //     9.5,
+      //     14.5,
+      //     18.2,
+      //     21.5,
+      //     25.2,
+      //     26.5,
+      //     23.3,
+      //     18.3,
+      //     13.9,
+      //     9.6
+      //   ]
+      // }
     ]
   };
   handleUpdate(stock, interval) {
     this.api.getChart(stock, interval).subscribe((data: any) => {
       // console.log(data);
+      this.orgData = data;
+      this.orgLen = data.values.length;
       if (data.status == "error") {
         alert("This is not available.Please, select something!!!");
         return;
@@ -87,6 +123,7 @@ export class StocksComponent implements OnInit {
       var l = data.values.length - 1;
       var min = data.values[l].datetime;
       var max = data.values[0].datetime;
+      this.predDate = max;
       var parsedDate = [];
       var getDaysArray = function(start, end) {
         for (
@@ -138,7 +175,33 @@ export class StocksComponent implements OnInit {
         this.updateFlag = true;
       }, 500);
       // console.log(this.data);
+      this.SMA(5);
     });
+  }
+  SMA(timeperiod) {
+    var dl = this.data.length - 1;
+    var pr = 0;
+    for (let j = dl; j > dl - timeperiod; j--) {
+      pr = pr + this.data[j];
+    }
+    this.predictedValue = pr / timeperiod;
+    this.EMA(timeperiod);
+  }
+  EMA(timeperiod) {
+    if (this.LastEMA == undefined) {
+      this.LastEMA = this.predictedValue;
+    }
+    this.smoothingValue = 2 / (timeperiod + 1);
+    //EMA=(closing price − previous day’s EMA)× smoothing constant as a decimal + previous day’s EMA
+    var result = [];
+    for (let i = this.orgLen - 1 - timeperiod; i >= 0; i--) {
+      var EMA =
+        (this.orgData.values[i].close - this.LastEMA) * this.smoothingValue +
+        this.LastEMA;
+      this.LastEMA = EMA;
+      result.push(this.LastEMA);
+    }
+    console.log(result);
   }
   ngOnInit() {
     this.handleUpdate("ALEAF", "1day");
