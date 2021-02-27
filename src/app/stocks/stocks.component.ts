@@ -70,7 +70,7 @@ export class StocksComponent implements OnInit {
   };
   handleUpdate(stock, interval) {
     this.api.getChart(stock, interval).subscribe((data: any) => {
-      console.log(data);
+      // console.log(data);
       if (data.status == "error") {
         alert("This is not available.Please, select something!!!");
         return;
@@ -102,84 +102,33 @@ export class StocksComponent implements OnInit {
       parsedDate.push(daylist.map(v => v.toISOString().slice(0, 10)));
       var dc = 0;
       for (let i = 0; i < data.values.length; i++) {
-        // console.log(
-        //   i + "," + parsedDate[0][parsedDate[0].length - i - 1],
-        //   data.values[i].datetime
-        // );
-        // var chk = parsedDate[0][dc].split("-");
-        // var diffsplit = data.values[i].datetime.split("-");
-        // var diff = chk[2] - diffsplit[2];
-        //////////
-        var date1 = new Date(parsedDate[0][parsedDate[0].length - i - 1]);
+        var date1 = new Date(parsedDate[0][parsedDate[0].length - 1 - dc]);
         var date2 = new Date(data.values[i].datetime);
         var Difference_In_Time = date1.getTime() - date2.getTime();
         var Difference_In_Days = Difference_In_Time / (1000 * 3600 * 24);
-        console.log(
-          "Total number of days between dates" +
-            date1 +
-            "and " +
-            date2 +
-            " is:" +
-            Difference_In_Days
-        );
-        //////////
-        // if (diff == 0) {
-        //   this.data.push(data.values[i].close);
-        // } else {
-        //   for (let j = 1; j <= diff; j++) {
-        //     this.data.push(Number(0));
-        //   }
-        // }
-        dc = dc + 1;
+        // console.log(
+        //   //   "Total number of days between dates" +
+        //   date1,
+        //   //     "and " +
+        //   date2
+        //   //     " is:" +
+        //   //     Difference_In_Days
+        // );
+        if (Difference_In_Days == 0) {
+          this.data.push(data.values[i].close * 100);
+          dc = dc + 1;
+        } else {
+          for (let j = 1; j <= Difference_In_Days; j++) {
+            this.data.push(data.values[i - 1].close * 100);
+            dc = dc + 1;
+          }
+        }
+        // console.log(data.values[i].close, this.data[i]);
       }
       //////last
-
-      // for (let i = 0; i < data.values.length; i++) {
-      //   this.data.push(Number(data.values[i].close));
-      // }
       var l = data.values.length - 1;
       var date = data.values[l].datetime.split("-");
       date[1] = date[1] - 1;
-      /////////
-      // this.data.push(Number(data.values[0].close));
-      // for (let i = 1; i < data.values.length; i++) {
-      //   var dt = data.values[i].datetime.split("-");
-      //   var dt1 = data.values[i - 1].datetime.split("-");
-      //   if (dt[2] - dt1[2] != 1) {
-      //     switch (dt[1]) {
-      //       case 1:
-      //         if (dt[2] >= 1 && dt[2] <= 31) {
-      //           this.data.push(0);
-      //         }
-      //         console.log("January");
-      //         break;
-      //       case 2:
-      //         console.log("February");
-      //       case 3:
-
-      //       case 4:
-
-      //       case 5:
-
-      //       case 6:
-
-      //       case 7:
-
-      //       case 8:
-
-      //       case 9:
-
-      //       case 10:
-
-      //       case 11:
-
-      //       case 12:
-      //     }
-      //   } else {
-      //     this.data.push(Number(data.values[i].close));
-      //   }
-      // }
-      /////////
       setTimeout(() => {
         this.chartOptions.series[0] = {
           type: "area",
@@ -188,6 +137,7 @@ export class StocksComponent implements OnInit {
         };
         this.updateFlag = true;
       }, 500);
+      // console.log(this.data);
     });
   }
   ngOnInit() {
