@@ -43,6 +43,7 @@ export class StocksComponent implements OnInit {
   LastEMA: any;
   orgLen: any;
   orgData: any;
+  startDate: any;
   constructor(private api: ApiService) {
     this.colResizeDefault = "shift";
     this.defaultColDef = {
@@ -67,7 +68,8 @@ export class StocksComponent implements OnInit {
     },
     series: [
       {
-        type: "area",
+        name: "Original",
+        type: "line",
         pointInterval: 24 * 3600 * 1000,
         pointStart: Date.UTC(2020, 0, 1),
         marker: {
@@ -75,36 +77,36 @@ export class StocksComponent implements OnInit {
           lineColor: Highcharts.getOptions().colors[1]
         },
         data: this.data
+      },
+      {
+        name: "Predicted-EMA",
+        type: "line",
+        pointInterval: 24 * 3600 * 1000,
+        pointStart: Date.UTC(2020, 0, 1),
+        marker: {
+          fillColor: "red",
+          lineColor: Highcharts.getOptions().colors[2]
+        },
+        data: [
+          // 7.0,
+          // 6.9,
+          // 9.5,
+          // 14.5,
+          // 18.2,
+          // 21.5,
+          // 25.2,
+          // 26.5,
+          // 23.3,
+          // 18.3,
+          // 13.9,
+          // 9.6
+        ]
       }
-      // ,
-      // {
-      //   type: "area",
-      //   pointInterval: 24 * 3600 * 1000,
-      //   pointStart: Date.UTC(2020, 0, 1),
-      //   marker: {
-      //     fillColor: "red",
-      //     lineColor: Highcharts.getOptions().colors[2]
-      //   },
-      //   data: [
-      //     7.0,
-      //     6.9,
-      //     9.5,
-      //     14.5,
-      //     18.2,
-      //     21.5,
-      //     25.2,
-      //     26.5,
-      //     23.3,
-      //     18.3,
-      //     13.9,
-      //     9.6
-      //   ]
-      // }
     ]
   };
   handleUpdate(stock, interval) {
     this.api.getChart(stock, interval).subscribe((data: any) => {
-      // console.log(data);
+      console.log(data);
       this.orgData = data;
       this.orgLen = data.values.length;
       if (data.status == "error") {
@@ -166,10 +168,11 @@ export class StocksComponent implements OnInit {
       ///note the last value from the data is not pushed to the diagram
       var l = data.values.length - 1;
       var date = data.values[l].datetime.split("-");
+      this.startDate = date;
       date[1] = date[1] - 1;
       setTimeout(() => {
         this.chartOptions.series[0] = {
-          type: "area",
+          type: "line",
           data: this.data,
           pointStart: Date.UTC(date[0], date[1], date[2])
         };
@@ -202,8 +205,23 @@ export class StocksComponent implements OnInit {
       this.LastEMA = EMA;
       result.push(this.LastEMA);
     }
+    ///dout whether to put k=1 or k=0 chk it
+    for (let k = 0; k < timeperiod; k++) {
+      result.push("");
+    }
+
     result = result.reverse();
     console.log(result);
+    console.log(this.startDate);
+    this.chartOptions.series[1] = {
+      type: "line",
+      data: result,
+      pointStart: Date.UTC(
+        this.startDate[0],
+        this.startDate[1],
+        this.startDate[2]
+      )
+    };
   }
   ngOnInit() {
     this.handleUpdate("ALEAF", "1day");
