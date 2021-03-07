@@ -107,8 +107,8 @@ export class StocksComponent implements OnInit {
   handleUpdate(stock, interval) {
     this.api.getChart(stock, interval).subscribe((data: any) => {
       console.log(data);
-      this.orgData = data;
-      this.orgLen = data.values.length;
+      // this.orgData = data;
+      // this.orgLen = data.values.length;
       if (data.status == "error") {
         alert("This is not available.Please, select something!!!");
         return;
@@ -154,16 +154,18 @@ export class StocksComponent implements OnInit {
         //   //     Difference_In_Days
         // );
         if (Difference_In_Days == 0) {
-          this.data.push(data.values[i].close * 100);
+          this.data.push(data.values[i].close * 1);
           dc = dc + 1;
         } else {
           for (let j = 1; j <= Difference_In_Days; j++) {
-            this.data.push(data.values[i - 1].close * 100);
+            this.data.push(data.values[i - 1].close * 1);
             dc = dc + 1;
           }
         }
         // console.log(data.values[i].close, this.data[i]);
       }
+      this.data.push(data.values[data.values.length - 1].close * 1);
+      this.data = this.data.reverse();
       //////last
       ///note the last value from the data is not pushed to the diagram
       var l = data.values.length - 1;
@@ -205,11 +207,9 @@ export class StocksComponent implements OnInit {
       this.LastEMA = EMA;
       result.push(this.LastEMA);
     }
-    ///dout whether to put k=1 or k=0 chk it
     for (let k = 0; k < timeperiod; k++) {
       result.push("");
     }
-
     result = result.reverse();
     console.log(result);
     console.log(this.startDate);
@@ -224,7 +224,7 @@ export class StocksComponent implements OnInit {
     };
   }
   ngOnInit() {
-    this.handleUpdate("ALEAF", "1day");
+    this.handleUpdate("GOOGL", "1day");
     this.columnDefs = [
       { field: "code" },
       { field: "country" },
@@ -237,6 +237,7 @@ export class StocksComponent implements OnInit {
     });
   }
   Plot() {
+    this.data = [];
     const selectedNodes = this.agGrid.api.getSelectedNodes();
     var selectedId = selectedNodes.map(node => node.data.symbol);
     if (selectedId == undefined || selectedId.length == 0) {

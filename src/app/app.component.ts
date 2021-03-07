@@ -19,7 +19,7 @@ export class AppComponent implements OnInit {
     }
   }
   ngOnInit() {
-    $(document).ready(() => {
+    $(document).ready(function() {
       if (this.menu == "Home") {
         $(window).scroll(function() {
           if ($(document).scrollTop() > 50) {
