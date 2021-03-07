@@ -31,9 +31,9 @@
     [paginationAutoPageSize]="true"
   >
   </ag-grid-angular>
-  To see the accurate prediction 
+  To see the accurate prediction
   <button class="btn btn-info" (click)="Plot('sample')">
-     Click Here
+    Click Here
   </button>
   <highcharts-chart
     [Highcharts]="Highcharts"
@@ -42,5 +42,5 @@
     [(update)]="updateFlag"
   >
   </highcharts-chart>
-  SMA Predicted Value on {{predDate}}: {{predictedValue}}
+  SMA Predicted Value on {{predDate | date}}: {{predictedValue}}
 </div>

@@ -122,6 +122,8 @@ export class StocksComponent implements OnInit {
       var min = data.values[l].datetime;
       var max = data.values[0].datetime;
       this.predDate = max;
+      this.predDate = new Date(this.predDate);
+      this.predDate.setDate(this.predDate.getDate() + 1);
       var parsedDate = [];
       var getDaysArray = function(start, end) {
         for (
