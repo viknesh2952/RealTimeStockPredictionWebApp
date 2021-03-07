@@ -34,7 +34,7 @@ export class HomeComponent implements OnInit {
   };
 
   handleUpdate() {
-    this.api.getChart("ALEAF", "1day").subscribe((data: any) => {
+    this.api.getChart("ALEAF", "1day", "real").subscribe((data: any) => {
       console.log(data);
       this.chartOptions.title = {
         text:

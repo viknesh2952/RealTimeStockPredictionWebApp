@@ -104,11 +104,9 @@ export class StocksComponent implements OnInit {
       }
     ]
   };
-  handleUpdate(stock, interval) {
-    this.api.getChart(stock, interval).subscribe((data: any) => {
+  handleUpdate(stock, interval, datatype) {
+    this.api.getChart(stock, interval, datatype).subscribe((data: any) => {
       console.log(data);
-      // this.orgData = data;
-      // this.orgLen = data.values.length;
       if (data.status == "error") {
         alert("This is not available.Please, select something!!!");
         return;
@@ -120,8 +118,6 @@ export class StocksComponent implements OnInit {
       this.chartOptions.yAxis = {
         title: { text: "Close Value in " + data.meta.currency }
       };
-      ////////////////last
-
       var l = data.values.length - 1;
       var min = data.values[l].datetime;
       var max = data.values[0].datetime;
@@ -162,12 +158,9 @@ export class StocksComponent implements OnInit {
             dc = dc + 1;
           }
         }
-        // console.log(data.values[i].close, this.data[i]);
       }
       this.data.push(data.values[data.values.length - 1].close * 1);
       this.data = this.data.reverse();
-      //////last
-      ///note the last value from the data is not pushed to the diagram
       var l = data.values.length - 1;
       var date = data.values[l].datetime.split("-");
       this.startDate = date;
@@ -224,7 +217,7 @@ export class StocksComponent implements OnInit {
     };
   }
   ngOnInit() {
-    this.handleUpdate("GOOGL", "1day");
+    this.handleUpdate("GOOGL", "1day", "real");
     this.columnDefs = [
       { field: "code" },
       { field: "country" },
@@ -236,16 +229,20 @@ export class StocksComponent implements OnInit {
       this.rowData = data.data;
     });
   }
-  Plot() {
+  Plot(data) {
     this.data = [];
-    const selectedNodes = this.agGrid.api.getSelectedNodes();
-    var selectedId = selectedNodes.map(node => node.data.symbol);
-    if (selectedId == undefined || selectedId.length == 0) {
-      alert("Please, select any one stock!!!");
+    if (data == "sample") {
+      this.handleUpdate("SAMPLE", "1day", "sample");
     } else {
-      this.handleUpdate(selectedId, "1day");
+      const selectedNodes = this.agGrid.api.getSelectedNodes();
+      var selectedId = selectedNodes.map(node => node.data.symbol);
+      if (selectedId == undefined || selectedId.length == 0) {
+        alert("Please, select any one stock!!!");
+      } else {
+        this.handleUpdate(selectedId, "1day", "real");
+      }
+      console.log(selectedId);
     }
-    console.log(selectedId);
   }
   getStocks() {
     this.columnDefs = [];
