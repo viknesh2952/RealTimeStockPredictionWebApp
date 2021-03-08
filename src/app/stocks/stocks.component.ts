@@ -139,21 +139,35 @@ export class StocksComponent implements OnInit {
   MACD() {
     var large = this.EMACalc(26, this.orgData);
     var small = this.EMACalc(12, this.orgData);
-    var length = large.length - 1;
+    var length = small.length - 1;
     var macd = [];
-    for (let i = 0; i < length; i++) {
-      macd[i] = small[i] - large[i];
+    var j = 0;
+    // for (let i = 0; i <= 14; i++) {
+    //   macd[i] = null;
+    // }
+    for (let i = 26 - 12; i < length; i++) {
+      macd[j] = small[i] - large[j];
+      j++;
     }
     var signalLine = this.EMACalc(9, macd);
-    // this.chartOptions.series[2] = {
-    //   type: "line",
-    //   data: result,
-    //   pointStart: Date.UTC(
-    //     this.startDate[0],
-    //     this.startDate[1],
-    //     this.startDate[2]
-    //   )
-    // };
+    this.chartOptions.series[2] = {
+      type: "line",
+      data: macd,
+      pointStart: Date.UTC(
+        this.startDate[0],
+        this.startDate[1],
+        this.startDate[2]
+      )
+    };
+    this.chartOptions.series[3] = {
+      type: "line",
+      data: signalLine,
+      pointStart: Date.UTC(
+        this.startDate[0],
+        this.startDate[1],
+        this.startDate[2]
+      )
+    };
   }
   handleUpdate(stock, interval) {
     this.api.getChart(stock, interval).subscribe((data: any) => {
