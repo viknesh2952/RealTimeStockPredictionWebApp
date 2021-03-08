@@ -12,35 +12,17 @@
   <h3 style="margin-left:45%;">
     {{table}}
     <span
-      ><button class="btn btn-dark" (click)="Plot('real')" *ngIf="enableplot">
+      ><button class="btn btn-dark" (click)="Plot()" *ngIf="enableplot">
         Plot
-      </button></span
-    >
+      </button></span>
   </h3>
-  <ag-grid-angular
-    #agGrid
-    style="width: auto; height: 450px;"
-    class="ag-theme-alpine"
-    rowSelection="single"
-    [rowData]="rowData"
-    [columnDefs]="columnDefs"
-    [defaultColDef]="defaultColDef"
-    [colResizeDefault]="colResizeDefault"
-    [enableRangeSelection]="true"
-    [pagination]="true"
-    [paginationAutoPageSize]="true"
-  >
+  <ag-grid-angular #agGrid style="width: auto; height: 450px;" class="ag-theme-alpine" rowSelection="single"
+    [rowData]="rowData" [columnDefs]="columnDefs" [defaultColDef]="defaultColDef" [colResizeDefault]="colResizeDefault"
+    [enableRangeSelection]="true" [pagination]="true" [paginationAutoPageSize]="true">
   </ag-grid-angular>
-  To see the accurate prediction
-  <button class="btn btn-info" (click)="Plot('sample')">
-    Click Here
-  </button>
-  <highcharts-chart
-    [Highcharts]="Highcharts"
-    [constructorType]="'stockChart'"
-    [options]="chartOptions"
-    [(update)]="updateFlag"
-  >
+  <highcharts-chart [Highcharts]="Highcharts" [constructorType]="'stockChart'" [options]="chartOptions"
+    [(update)]="updateFlag">
   </highcharts-chart>
-  SMA Predicted Value on {{predDate | date}}: {{predictedValue}}
+  <!-- SMA Predicted Value on {{predDate | date}}: {{predictedValue}}<br> -->
+  EMA Predicted Value on {{predDate | date}}: {{emaPredictedValue}}
 </div>

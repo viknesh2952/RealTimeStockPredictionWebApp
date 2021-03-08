@@ -44,6 +44,7 @@ export class StocksComponent implements OnInit {
   orgLen: any;
   orgData: any;
   startDate: any;
+  emaPredictedValue: any;
   constructor(private api: ApiService) {
     this.colResizeDefault = "shift";
     this.defaultColDef = {
@@ -87,25 +88,75 @@ export class StocksComponent implements OnInit {
           fillColor: "red",
           lineColor: Highcharts.getOptions().colors[2]
         },
-        data: [
-          // 7.0,
-          // 6.9,
-          // 9.5,
-          // 14.5,
-          // 18.2,
-          // 21.5,
-          // 25.2,
-          // 26.5,
-          // 23.3,
-          // 18.3,
-          // 13.9,
-          // 9.6
-        ]
+        data: []
+      },
+      {
+        name: "MACD",
+        type: "line",
+        pointInterval: 24 * 3600 * 1000,
+        pointStart: Date.UTC(2020, 0, 1),
+        marker: {
+          fillColor: "green",
+          lineColor: Highcharts.getOptions().colors[3]
+        },
+        data: []
+      },
+      {
+        name: "Signal-Line",
+        type: "line",
+        pointInterval: 24 * 3600 * 1000,
+        pointStart: Date.UTC(2020, 0, 1),
+        marker: {
+          fillColor: "orange",
+          lineColor: Highcharts.getOptions().colors[4]
+        },
+        data: []
       }
     ]
   };
-  handleUpdate(stock, interval, datatype) {
-    this.api.getChart(stock, interval, datatype).subscribe((data: any) => {
+  EMACalc(timeperiod, orgData) {
+    var dl = orgData.length - 1;
+    var pr = 0;
+    for (let j = dl; j > dl - timeperiod; j--) {
+      pr = pr + orgData[j];
+    }
+    var smaPredictedValue = pr / timeperiod;
+    var LastEMA = smaPredictedValue;
+    var result = [smaPredictedValue];
+    var smoothingValue = 2 / (timeperiod + 1);
+    var dl = orgData.length - 1;
+    for (let i = dl - timeperiod; i >= 0; i--) {
+      var EMA = (orgData[i] - LastEMA) * smoothingValue + LastEMA;
+      LastEMA = EMA;
+      result.push(LastEMA);
+    }
+    for (let k = 0; k < timeperiod; k++) {
+      result.push(null);
+    }
+    result = result.reverse();
+    return result;
+  }
+  MACD() {
+    var large = this.EMACalc(26, this.orgData);
+    var small = this.EMACalc(12, this.orgData);
+    var length = large.length - 1;
+    var macd = [];
+    for (let i = 0; i < length; i++) {
+      macd[i] = small[i] - large[i];
+    }
+    var signalLine = this.EMACalc(9, macd);
+    // this.chartOptions.series[2] = {
+    //   type: "line",
+    //   data: result,
+    //   pointStart: Date.UTC(
+    //     this.startDate[0],
+    //     this.startDate[1],
+    //     this.startDate[2]
+    //   )
+    // };
+  }
+  handleUpdate(stock, interval) {
+    this.api.getChart(stock, interval).subscribe((data: any) => {
       console.log(data);
       if (data.status == "error") {
         alert("This is not available.Please, select something!!!");
@@ -163,6 +214,7 @@ export class StocksComponent implements OnInit {
       }
       this.data.push(data.values[data.values.length - 1].close * 1);
       this.data = this.data.reverse();
+      this.orgData = this.data;
       var l = data.values.length - 1;
       var date = data.values[l].datetime.split("-");
       this.startDate = date;
@@ -187,6 +239,7 @@ export class StocksComponent implements OnInit {
     }
     this.predictedValue = pr / timeperiod;
     this.EMA(timeperiod);
+    this.MACD();
   }
   EMA(timeperiod) {
     if (this.LastEMA == undefined) {
@@ -203,7 +256,7 @@ export class StocksComponent implements OnInit {
       result.push(this.LastEMA);
     }
     for (let k = 0; k < timeperiod; k++) {
-      result.push("");
+      result.push(null);
     }
     result = result.reverse();
     console.log(result);
@@ -217,9 +270,10 @@ export class StocksComponent implements OnInit {
         this.startDate[2]
       )
     };
+    this.emaPredictedValue = result[result.length - 1];
   }
   ngOnInit() {
-    this.handleUpdate("GOOGL", "1day", "real");
+    this.handleUpdate("GOOGL", "1day");
     this.columnDefs = [
       { field: "code" },
       { field: "country" },
@@ -231,19 +285,14 @@ export class StocksComponent implements OnInit {
       this.rowData = data.data;
     });
   }
-  Plot(data) {
+  Plot() {
     this.data = [];
-    if (data == "sample") {
-      this.handleUpdate("SAMPLE", "1day", "sample");
+    const selectedNodes = this.agGrid.api.getSelectedNodes();
+    var selectedId = selectedNodes.map(node => node.data.symbol);
+    if (selectedId == undefined || selectedId.length == 0) {
+      alert("Please, select any one stock!!!");
     } else {
-      const selectedNodes = this.agGrid.api.getSelectedNodes();
-      var selectedId = selectedNodes.map(node => node.data.symbol);
-      if (selectedId == undefined || selectedId.length == 0) {
-        alert("Please, select any one stock!!!");
-      } else {
-        this.handleUpdate(selectedId, "1day", "real");
-      }
-      console.log(selectedId);
+      this.handleUpdate(selectedId, "1day");
     }
   }
   getStocks() {
