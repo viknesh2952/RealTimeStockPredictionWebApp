@@ -45,6 +45,9 @@ export class StocksComponent implements OnInit {
   orgData: any;
   startDate: any;
   emaPredictedValue: any;
+  macd: any[];
+  small: number[];
+  large: number[];
   constructor(private api: ApiService) {
     this.colResizeDefault = "shift";
     this.defaultColDef = {
@@ -114,7 +117,7 @@ export class StocksComponent implements OnInit {
       }
     ]
   };
-  EMACalc(timeperiod, orgData) {
+  EMACalc(timeperiod, orgData, isSignal, nullNO) {
     var dl = orgData.length - 1;
     var pr = 0;
     for (let j = dl; j > dl - timeperiod; j--) {
@@ -131,25 +134,42 @@ export class StocksComponent implements OnInit {
       result.push(LastEMA);
     }
     for (let k = 0; k < timeperiod; k++) {
-      result.push(null);
+      result.push(null); //change into null
+    }
+    if (isSignal) {
+      for (let k = 0; k < nullNO; k++) {
+        result.push(null); //change into null
+      }
     }
     result = result.reverse();
     return result;
   }
   MACD() {
-    var large = this.EMACalc(26, this.orgData);
-    var small = this.EMACalc(12, this.orgData);
+    var ratio = [12, 26, 9];
+    var large = this.EMACalc(ratio[1], this.orgData, "no", 0);
+    var small = this.EMACalc(ratio[0], this.orgData, "no", 0);
     var length = small.length - 1;
     var macd = [];
-    var j = 0;
-    // for (let i = 0; i <= 14; i++) {
-    //   macd[i] = null;
-    // }
-    for (let i = 26 - 12; i < length; i++) {
-      macd[j] = small[i] - large[j];
-      j++;
+    for (let i = 0; i <= ratio[1]; i++) {
+      macd[i] = null; //change into null
     }
-    var signalLine = this.EMACalc(9, macd);
+    for (let i = macd.length - 1; i < length; i++) {
+      macd[i] = small[i] - large[i];
+      // console.log(
+      //   i + 1 + ".)" + small[i - ratio[0]] + "-" + large[i] + "=" + macd[i]
+      // );
+    }
+    var signalLine = [];
+    signalLine = this.EMACalc(ratio[2], macd, "yes", ratio[1]);
+    for (let i = 0; i < 100; i++) {
+      console.log(
+        i + 1 + ".)" + this.orgData[i],
+        small[i],
+        large[i],
+        macd[i],
+        signalLine[i]
+      );
+    }
     this.chartOptions.series[2] = {
       type: "line",
       data: macd,
@@ -171,7 +191,6 @@ export class StocksComponent implements OnInit {
   }
   handleUpdate(stock, interval) {
     this.api.getChart(stock, interval).subscribe((data: any) => {
-      console.log(data);
       if (data.status == "error") {
         alert("This is not available.Please, select something!!!");
         return;
@@ -273,8 +292,6 @@ export class StocksComponent implements OnInit {
       result.push(null);
     }
     result = result.reverse();
-    console.log(result);
-    console.log(this.startDate);
     this.chartOptions.series[1] = {
       type: "line",
       data: result,
@@ -295,7 +312,6 @@ export class StocksComponent implements OnInit {
       { field: "timezone" }
     ];
     this.api.getExchangesList().subscribe((data: any) => {
-      console.log(data);
       this.rowData = data.data;
     });
   }
@@ -327,7 +343,6 @@ export class StocksComponent implements OnInit {
     ];
     this.enableplot = true;
     this.api.getStocksList().subscribe((data: any) => {
-      console.log(data);
       this.rowData = data.data;
     });
     this.table = "Stocks";
@@ -342,7 +357,6 @@ export class StocksComponent implements OnInit {
       { field: "timezone" }
     ];
     this.api.getExchangesList().subscribe((data: any) => {
-      console.log(data);
       this.rowData = data.data;
     });
     this.table = "Exchanges";
@@ -357,7 +371,6 @@ export class StocksComponent implements OnInit {
       { field: "symbol" }
     ];
     this.api.getIndicesList().subscribe((data: any) => {
-      console.log(data);
       this.rowData = data.data;
     });
     this.table = "Indices";
