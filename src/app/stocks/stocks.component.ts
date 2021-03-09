@@ -161,15 +161,15 @@ export class StocksComponent implements OnInit {
     }
     var signalLine = [];
     signalLine = this.EMACalc(ratio[2], macd, "yes", ratio[1]);
-    for (let i = 0; i < 100; i++) {
-      console.log(
-        i + 1 + ".)" + this.orgData[i],
-        small[i],
-        large[i],
-        macd[i],
-        signalLine[i]
-      );
-    }
+    // for (let i = 0; i < 100; i++) {
+    //   console.log(
+    //     i + 1 + ".)" + this.orgData[i],
+    //     small[i],
+    //     large[i],
+    //     macd[i],
+    //     signalLine[i]
+    //   );
+    // }
     this.chartOptions.series[2] = {
       type: "line",
       data: macd,
