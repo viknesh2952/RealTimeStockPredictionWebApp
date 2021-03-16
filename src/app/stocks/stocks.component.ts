@@ -48,6 +48,8 @@ export class StocksComponent implements OnInit {
   macd: any[];
   small: number[];
   large: number[];
+  volData: any = [];
+  updateFlag1: boolean;
   constructor(private api: ApiService) {
     this.colResizeDefault = "shift";
     this.defaultColDef = {
@@ -58,6 +60,7 @@ export class StocksComponent implements OnInit {
     };
   }
   Highcharts: typeof Highcharts = Highcharts;
+  Highcharts1: typeof Highcharts = Highcharts;
   chartOptions: Highcharts.Options = {
     title: {
       text: "Live Stocks"
@@ -65,11 +68,13 @@ export class StocksComponent implements OnInit {
     xAxis: {
       type: "datetime"
     },
-    yAxis: {
-      title: {
-        text: "Close Value"
+    yAxis: [
+      {
+        title: {
+          text: "Close Value"
+        }
       }
-    },
+    ],
     series: [
       {
         name: "Original",
@@ -114,6 +119,43 @@ export class StocksComponent implements OnInit {
           lineColor: Highcharts.getOptions().colors[4]
         },
         data: []
+      }
+    ]
+  };
+  chartOptions1: Highcharts.Options = {
+    // title: {
+    //   text: "Live Stocks"
+    // },
+    xAxis: {
+      type: "datetime"
+    },
+    yAxis: [
+      {
+        title: {
+          text: "Volume"
+        },
+        labels: {
+          formatter: function() {
+            return this.value / 100000 + "M";
+          }
+        }
+      }
+    ],
+    series: [
+      {
+        name: "Volume",
+        type: "column",
+        pointInterval: 24 * 3600 * 1000,
+        pointStart: Date.UTC(2020, 0, 1),
+        data: [
+          // {y:34.4, color: "red" },
+          // 21.8,
+          // { y:20.1, color: "#aaff99" },
+          // 20,
+          // 19.6,
+          // 19.5,
+          // 19.1
+        ]
       }
     ]
   };
@@ -237,16 +279,39 @@ export class StocksComponent implements OnInit {
         // );
         if (Difference_In_Days == 0) {
           this.data.push(data.values[i].close * 1);
+          this.volData.push({
+            y: data.values[i].volume * 0.01,
+            color: "green"
+          });
           dc = dc + 1;
         } else {
           for (let j = 1; j <= Difference_In_Days; j++) {
             this.data.push(data.values[i - 1].close * 1);
+            this.volData.push({
+              y: data.values[i - 1].volume * 0.01,
+              color: "green"
+            });
             dc = dc + 1;
           }
         }
       }
       this.data.push(data.values[data.values.length - 1].close * 1);
+      this.volData.push({
+        y: data.values[data.values.length - 1].volume * 0.01,
+        color: "green"
+      });
       this.data = this.data.reverse();
+      this.volData = this.volData.reverse();
+      var volTotal = 0;
+      for (let j = 0; j < this.volData.length; j++) {
+        volTotal = volTotal + this.volData[j].y;
+      }
+      var volAvg = volTotal / this.volData.length;
+      for (let k = 0; k < this.volData.length; k++) {
+        if (this.volData[k].y > volAvg) {
+          this.volData[k].color = "red";
+        }
+      }
       this.orgData = this.data;
       var l = data.values.length - 1;
       var date = data.values[l].datetime.split("-");
@@ -258,9 +323,14 @@ export class StocksComponent implements OnInit {
           data: this.data,
           pointStart: Date.UTC(date[0], date[1], date[2])
         };
+        this.chartOptions1.series[0] = {
+          type: "column",
+          data: this.volData,
+          pointStart: Date.UTC(date[0], date[1], date[2])
+        };
         this.updateFlag = true;
+        this.updateFlag1 = true;
       }, 500);
-      // console.log(this.data);
       this.SMA(5);
     });
   }
