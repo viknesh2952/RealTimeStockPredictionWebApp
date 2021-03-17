@@ -25,6 +25,11 @@ export class ApiService {
       }&outputsize=600`
     );
   }
+  getSample() {
+    return this.http.get(
+      "https://demo-live-data.highcharts.com/aapl-ohlcv.json"
+    );
+  }
 }
 // https://api.twelvedata.com/time_series?symbol=GOOGL&interval=1day&apikey=e4a53dc2e6214b7c9b9763713d9cfda5&outputsize=3146&start_date=2005-01-01&end_date=2017-06-30
 // return this.http.get(

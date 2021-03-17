@@ -26,5 +26,8 @@
   <highcharts-chart [Highcharts]="Highcharts1" [constructorType]="'stockChart'" [options]="chartOptions1"
     [(update)]="updateFlag1">
   </highcharts-chart>
+  <highcharts-chart [Highcharts]="Highcharts" [constructorType]="'stockChart'" [options]="chartOptions2"
+    [(update)]="updateFlag1">
+  </highcharts-chart>
   EMA Predicted Value on {{predDate | date}}: {{emaPredictedValue}}
 </div>

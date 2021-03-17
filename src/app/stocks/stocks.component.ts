@@ -5,6 +5,7 @@ import { MenuModule } from "@ag-grid-enterprise/menu";
 import { ColumnsToolPanelModule } from "@ag-grid-enterprise/column-tool-panel";
 import * as Highcharts from "highcharts/highstock";
 import { AgGridAngular } from "ag-grid-angular";
+import { HttpClient } from "@angular/common/http";
 @Component({
   selector: "app-stocks",
   templateUrl: "./stocks.component.html",
@@ -50,6 +51,10 @@ export class StocksComponent implements OnInit {
   large: number[];
   volData: any = [];
   updateFlag1: boolean;
+  ohlc: any[];
+  dataLength: any;
+  volume: any[];
+  groupingUnits: (string | number[])[][];
   constructor(private api: ApiService) {
     this.colResizeDefault = "shift";
     this.defaultColDef = {
@@ -120,7 +125,10 @@ export class StocksComponent implements OnInit {
         },
         data: []
       }
-    ]
+    ],
+    credits: {
+      enabled: false
+    }
   };
   chartOptions1: Highcharts.Options = {
     // title: {
@@ -147,18 +155,87 @@ export class StocksComponent implements OnInit {
         type: "column",
         pointInterval: 24 * 3600 * 1000,
         pointStart: Date.UTC(2020, 0, 1),
-        data: [
-          // {y:34.4, color: "red" },
-          // 21.8,
-          // { y:20.1, color: "#aaff99" },
-          // 20,
-          // 19.6,
-          // 19.5,
-          // 19.1
-        ]
+        data: []
       }
     ]
   };
+  chartOptions2: Highcharts.Options = {
+    rangeSelector: {
+      selected: 1
+    },
+
+    title: {
+      text: "AAPL Historical"
+    },
+
+    yAxis: [
+      {
+        labels: {
+          align: "right",
+          x: -3
+        },
+        title: {
+          text: "OHLC"
+        },
+        height: "60%",
+        lineWidth: 2,
+        resize: {
+          enabled: true
+        }
+      },
+      {
+        labels: {
+          align: "right",
+          x: -3
+        },
+        title: {
+          text: "Volume"
+        },
+        top: "65%",
+        height: "35%",
+        offset: 0,
+        lineWidth: 2
+      }
+    ],
+
+    tooltip: {
+      split: true
+    },
+
+    series: [
+      {
+        type: "candlestick",
+        name: "AAPL",
+        data: [
+          [1552915800000, 46.45, 47.1, 46.45, 47.01],
+          [1553002200000, 47.09, 47.25, 46.48, 46.63],
+          [1553088600000, 46.56, 47.37, 46.18, 47.04],
+          [1553175000000, 47.51, 49.08, 47.45, 48.77],
+          [1553261400000, 48.83, 49.42, 47.69, 47.76],
+          [1553520600000, 47.88, 47.99, 46.65, 47.19],
+          [1553607000000, 47.92, 48.22, 46.15, 46.7],
+          [1553693400000, 47.19, 47.44, 46.64, 47.12]
+        ]
+      },
+      {
+        type: "column",
+        name: "Volume",
+        data: [
+          2341423,
+          14,
+          12341,
+          132412341,
+          1234,
+          1234123512,
+          1341234,
+          12341234,
+          123412341
+        ],
+        yAxis: 1
+      }
+    ]
+  };
+
   EMACalc(timeperiod, orgData, isSignal, nullNO) {
     var dl = orgData.length - 1;
     var pr = 0;
@@ -231,6 +308,7 @@ export class StocksComponent implements OnInit {
       )
     };
   }
+
   handleUpdate(stock, interval) {
     this.api.getChart(stock, interval).subscribe((data: any) => {
       if (data.status == "error") {
@@ -373,8 +451,43 @@ export class StocksComponent implements OnInit {
     };
     this.emaPredictedValue = result[result.length - 1];
   }
+  sampleData() {
+    ///////////
+    this.api.getSample().subscribe((data: any) => {
+      console.log(data);
+      this.ohlc = [];
+      this.volume = [];
+      this.dataLength = data.length;
+      // set the allowed units for data grouping
+      this.groupingUnits = [
+        [
+          "week", // unit name
+          [1] // allowed multiples
+        ],
+        ["month", [1, 2, 3, 4, 6]]
+      ];
+
+      var i = 0;
+
+      for (i; i < this.dataLength; i += 1) {
+        this.ohlc.push([
+          data[i][0], // the date
+          data[i][1], // open
+          data[i][2], // high
+          data[i][3], // low
+          data[i][4] // close
+        ]);
+
+        this.volume.push([
+          data[i][0], // the date
+          data[i][5] // the volume
+        ]);
+      }
+    });
+  }
   ngOnInit() {
     this.handleUpdate("GOOGL", "1day");
+    this.sampleData();
     this.columnDefs = [
       { field: "code" },
       { field: "country" },
