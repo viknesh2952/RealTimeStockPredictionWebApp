@@ -370,6 +370,41 @@ export class StocksComponent implements OnInit {
       }, 500);
       this.SMA(5);
     });
+    this.VWAP(stock);
+  }
+  VWAP(stock) {
+    this.api.getOneDay(stock).subscribe((data: any) => {
+      // console.log(data);
+      var lastdate = data.values[0].datetime.split(" ");
+      var orgData = [];
+      for (let i = 0; i < data.values.length - 1; i++) {
+        if (data.values[i].datetime.includes(lastdate[0])) {
+          orgData.push(data.values[i]);
+        }
+      }
+      orgData = orgData.reverse();
+      var cumPriceVol = 0;
+      var cumVol = 0;
+      var VWAP = [];
+      for (let i = 0; i < orgData.length; i++) {
+        var high = Number(orgData[i].high);
+        var low = Number(orgData[i].low);
+        var close = Number(orgData[i].close);
+        var volume = Number(orgData[i].volume);
+        var avgPriceCalc = high + low + close / 3;
+        var avgpriceVol = avgPriceCalc * volume;
+        if (i == 0) {
+          VWAP.push(avgpriceVol);
+          cumPriceVol = avgpriceVol;
+          cumVol = volume;
+        } else {
+          cumPriceVol = cumPriceVol + avgpriceVol;
+          cumVol = cumVol + volume;
+          VWAP.push(cumPriceVol / cumVol);
+        }
+      }
+      console.log(VWAP);
+    });
   }
   SMA(timeperiod) {
     var dl = this.data.length - 1;
