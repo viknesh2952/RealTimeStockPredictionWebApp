@@ -32,9 +32,9 @@ export class ApiService {
   }
   getOneDay(stock) {
     return this.http.get(
-      `${this.link}?symbol=${stock}&interval=5min&apikey=${
+      `${this.link}?symbol=${stock}&interval=1min&apikey=${
         this.apikey
-      }&outputsize=200`
+      }&outputsize=800`
     );
   }
 }

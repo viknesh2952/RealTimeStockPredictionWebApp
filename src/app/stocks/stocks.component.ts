@@ -196,8 +196,6 @@ export class StocksComponent implements OnInit {
       {
         name: "Close",
         type: "line",
-        pointInterval: 24 * 3600 * 1000,
-        pointStart: Date.UTC(2020, 0, 1),
         marker: {
           fillColor: "blue",
           lineColor: Highcharts.getOptions().colors[1]
@@ -207,11 +205,9 @@ export class StocksComponent implements OnInit {
       {
         name: "VWAP",
         type: "line",
-        pointInterval: 24 * 3600 * 1000,
-        pointStart: Date.UTC(2020, 0, 1),
         marker: {
           fillColor: "black",
-          lineColor: Highcharts.getOptions().colors[2]
+          lineColor: Highcharts.getOptions().colors[3]
         },
         data: []
       }
@@ -436,16 +432,18 @@ export class StocksComponent implements OnInit {
         var volume = Number(orgData[i].volume);
         var avgPriceCalc = (high + low + close) / 3;
         var avgpriceVol = avgPriceCalc * volume;
+        var dateString = new Date(orgData[i].datetime);
+        var milliDate = dateString.getTime();
         if (i == 0) {
-          VWAP.push(avgPriceCalc);
+          VWAP.push(new Array(milliDate, avgPriceCalc));
           cumPriceVol = avgpriceVol;
           cumVol = volume;
         } else {
           cumPriceVol = cumPriceVol + avgpriceVol;
           cumVol = cumVol + volume;
-          VWAP.push(cumPriceVol / cumVol);
+          VWAP.push(new Array(milliDate, cumPriceVol / cumVol));
         }
-        closePrices.push(Number(orgData[i].close));
+        closePrices.push(new Array(milliDate, Number(orgData[i].close)));
       }
       this.chartOptions3.series[0] = {
         type: "line",
