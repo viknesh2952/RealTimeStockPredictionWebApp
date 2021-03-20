@@ -173,7 +173,50 @@ export class StocksComponent implements OnInit {
       }
     ]
   };
-
+  chartOptions3: Highcharts.Options = {
+    title: {
+      text: "Volume Weighted Average Price"
+    },
+    xAxis: {
+      type: "datetime"
+    },
+    yAxis: [
+      {
+        title: {
+          text: "Close Vs VWAP"
+        }
+        // labels: {
+        //   formatter: function() {
+        //     return this.value / 100000 + "K";
+        //   }
+        // }
+      }
+    ],
+    series: [
+      {
+        name: "Close",
+        type: "line",
+        pointInterval: 24 * 3600 * 1000,
+        pointStart: Date.UTC(2020, 0, 1),
+        marker: {
+          fillColor: "blue",
+          lineColor: Highcharts.getOptions().colors[1]
+        },
+        data: []
+      },
+      {
+        name: "VWAP",
+        type: "line",
+        pointInterval: 24 * 3600 * 1000,
+        pointStart: Date.UTC(2020, 0, 1),
+        marker: {
+          fillColor: "black",
+          lineColor: Highcharts.getOptions().colors[2]
+        },
+        data: []
+      }
+    ]
+  };
   EMACalc(timeperiod, orgData, isSignal, nullNO) {
     var dl = orgData.length - 1;
     var pr = 0;
@@ -374,7 +417,6 @@ export class StocksComponent implements OnInit {
   }
   VWAP(stock) {
     this.api.getOneDay(stock).subscribe((data: any) => {
-      // console.log(data);
       var lastdate = data.values[0].datetime.split(" ");
       var orgData = [];
       for (let i = 0; i < data.values.length - 1; i++) {
@@ -386,15 +428,16 @@ export class StocksComponent implements OnInit {
       var cumPriceVol = 0;
       var cumVol = 0;
       var VWAP = [];
+      var closePrices = [];
       for (let i = 0; i < orgData.length; i++) {
         var high = Number(orgData[i].high);
         var low = Number(orgData[i].low);
         var close = Number(orgData[i].close);
         var volume = Number(orgData[i].volume);
-        var avgPriceCalc = high + low + close / 3;
+        var avgPriceCalc = (high + low + close) / 3;
         var avgpriceVol = avgPriceCalc * volume;
         if (i == 0) {
-          VWAP.push(avgpriceVol);
+          VWAP.push(avgPriceCalc);
           cumPriceVol = avgpriceVol;
           cumVol = volume;
         } else {
@@ -402,8 +445,26 @@ export class StocksComponent implements OnInit {
           cumVol = cumVol + volume;
           VWAP.push(cumPriceVol / cumVol);
         }
+        closePrices.push(Number(orgData[i].close));
       }
-      console.log(VWAP);
+      this.chartOptions3.series[0] = {
+        type: "line",
+        data: closePrices
+        // pointStart: Date.UTC(
+        //   this.startDate[0],
+        //   this.startDate[1],
+        //   this.startDate[2]
+        // )
+      };
+      this.chartOptions3.series[1] = {
+        type: "line",
+        data: VWAP
+        // pointStart: Date.UTC(
+        //   this.startDate[0],
+        //   this.startDate[1],
+        //   this.startDate[2]
+        // )
+      };
     });
   }
   SMA(timeperiod) {
