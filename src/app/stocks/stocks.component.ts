@@ -408,9 +408,54 @@ export class StocksComponent implements OnInit {
         this.updateFlag1 = true;
       }, 500);
       this.SMA(5);
+      // this.bolingerBands(20, this.data, this.startDate);
     });
     this.VWAP(stock);
   }
+  //https://thetradingbible.com/bollinger-bands-trading-strategy
+  // bolingerBands(value, data, startDate) {
+  //   var ub = [];
+  //   var lb = [];
+  //   var sma = [];
+  //   var res = [];
+  //   for (let i = 0; i < value; i++) {
+  //     ub.push(null);
+  //     lb.push(null);
+  //     sma.push(null);
+  //   }
+  //   for (let i = 0; i < data.length - value; i++) {
+  //     res.push(this.stdDevSma(data, i, value, 2));
+  //   }
+  //   for (let i = 0; i < res.length; i++) {
+  //     sma.push(res[i][0]);
+  //     ub.push(res[i][1]);
+  //     lb.push(res[i][2]);
+  //   }
+  //   startDate[1] = startDate[1] - 1;
+  // }
+  // stdDevSma(data, start, value, std) {
+  //   var total = 0;
+  //   var sma = 0;
+  //   var sd = 0;
+  //   var ub = 0;
+  //   var lb = 0;
+  //   var res = [];
+  //   for (let i = start; i < start + value; i++) {
+  //     total = total + data[i];
+  //   }
+  //   sma = total / value;
+  //   var sum = 0;
+  //   for (let i = 0; i < value; i++) {
+  //     var a = data[i] - sma;
+  //     sum = sum + Math.pow(a, 2);
+  //   }
+  //   sd = Math.sqrt(sum / (value - 1));
+  //   ub = sma + sd * std;
+  //   lb = sma - sd * std;
+  //   res = new Array(sma, ub, lb);
+  //   return res;
+  // }
+
   VWAP(stock) {
     this.api.getOneDay(stock).subscribe((data: any) => {
       var lastdate = data.values[0].datetime.split(" ");
@@ -445,23 +490,14 @@ export class StocksComponent implements OnInit {
         }
         closePrices.push(new Array(milliDate, Number(orgData[i].close)));
       }
+      // console.log(closePrices, VWAP);
       this.chartOptions3.series[0] = {
         type: "line",
         data: closePrices
-        // pointStart: Date.UTC(
-        //   this.startDate[0],
-        //   this.startDate[1],
-        //   this.startDate[2]
-        // )
       };
       this.chartOptions3.series[1] = {
         type: "line",
         data: VWAP
-        // pointStart: Date.UTC(
-        //   this.startDate[0],
-        //   this.startDate[1],
-        //   this.startDate[2]
-        // )
       };
     });
   }
