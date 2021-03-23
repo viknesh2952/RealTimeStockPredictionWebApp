@@ -23,6 +23,7 @@
   <highcharts-chart [Highcharts]="Highcharts" [constructorType]="'stockChart'" [options]="chartOptions"
     [(update)]="updateFlag">
   </highcharts-chart>
+  EMA Predicted Value on {{predDate | date}}: {{emaPredictedValue}}
   <highcharts-chart [Highcharts]="Highcharts" [constructorType]="'stockChart'" [options]="chartOptions1"
     [(update)]="updateFlag1">
   </highcharts-chart>
@@ -32,6 +33,7 @@
   <highcharts-chart [Highcharts]="Highcharts" [constructorType]="'stockChart'" [options]="chartOptions3"
     [(update)]="updateFlag1">
   </highcharts-chart>
-
-  EMA Predicted Value on {{predDate | date}}: {{emaPredictedValue}}
+  <highcharts-chart [Highcharts]="Highcharts" [constructorType]="'stockChart'" [options]="chartOptions4"
+    [(update)]="updateFlag1">
+  </highcharts-chart>
 </div>
