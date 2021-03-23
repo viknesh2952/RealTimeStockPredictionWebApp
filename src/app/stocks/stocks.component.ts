@@ -263,6 +263,34 @@ export class StocksComponent implements OnInit {
       }
     ]
   };
+  chartOptions5: Highcharts.Options = {
+    title: {
+      text: "Relative Strength Index"
+    },
+    xAxis: {
+      type: "datetime"
+    },
+    yAxis: [
+      {
+        title: {
+          text: "RSI"
+        }
+      }
+    ],
+    series: [
+      {
+        name: "RSI",
+        type: "line",
+        marker: {
+          fillColor: "black",
+          lineColor: Highcharts.getOptions().colors[2]
+        },
+        data: [],
+        pointInterval: 24 * 3600 * 1000,
+        pointStart: Date.UTC(2020, 0, 1)
+      }
+    ]
+  };
   EMACalc(timeperiod, orgData, isSignal, nullNO) {
     var dl = orgData.length - 1;
     var pr = 0;
@@ -460,6 +488,7 @@ export class StocksComponent implements OnInit {
       this.SMA(5);
       var dt = data.values[l].datetime;
       this.bolingerBands(20, this.data, dt);
+      this.RSI(this.data, 14, dt);
     });
     this.VWAP(stock);
   }
@@ -522,7 +551,61 @@ export class StocksComponent implements OnInit {
     res = new Array(sma, ub, lb);
     return res;
   }
-
+  //https://blog.quantinsti.com/rsi-indicator/
+  RSI(close, key, startDate) {
+    var rsi: any = [
+      {
+        close: [],
+        gain: [],
+        loss: [],
+        avgGain: [],
+        avgLoss: [],
+        RS: [],
+        RSI: []
+      }
+    ];
+    rsi.close = close;
+    rsi.gain = new Array(close.length).fill(0);
+    rsi.loss = new Array(close.length).fill(0);
+    rsi.avgGain = new Array(close.length).fill(0);
+    rsi.avgLoss = new Array(close.length).fill(0);
+    rsi.RS = new Array(close.length).fill(0);
+    rsi.RSI = new Array(close.length).fill(0);
+    for (let i = 1; i <= close.length - 1; i++) {
+      var diff = rsi.close[i] - rsi.close[i - 1];
+      if (diff < 0) {
+        rsi.loss[i] = Math.abs(diff);
+      } else if (diff > 0) {
+        rsi.gain[i] = diff;
+      }
+      // else {
+      //   // console.log("No change");
+      // }
+    }
+    var gainSum = 0;
+    var lossSum = 0;
+    for (let i = 1; i <= key; i++) {
+      gainSum = gainSum + rsi.gain[i];
+      lossSum = lossSum + rsi.loss[i];
+    }
+    rsi.avgGain[key] = gainSum / key;
+    rsi.avgLoss[key] = lossSum / key;
+    rsi.RS[key] = rsi.avgGain[key] / rsi.avgLoss[key];
+    rsi.RSI[key] = 100 - 100 / (1 + rsi.RS[key]);
+    for (let i = key + 1; i < close.length; i++) {
+      rsi.avgGain[i] = (rsi.avgGain[i - 1] * (key - 1) + rsi.gain[i]) / key;
+      rsi.avgLoss[i] = (rsi.avgLoss[i - 1] * (key - 1) + rsi.loss[i]) / key;
+      rsi.RS[i] = rsi.avgGain[i] / rsi.avgLoss[i];
+      rsi.RSI[i] = 100 - 100 / (1 + rsi.RS[i]);
+    }
+    startDate = new Date(startDate);
+    startDate = startDate.getTime();
+    this.chartOptions5.series[0] = {
+      type: "line",
+      data: rsi.RSI,
+      pointStart: startDate
+    };
+  }
   VWAP(stock) {
     this.api.getOneDay(stock).subscribe((data: any) => {
       var lastdate = data.values[0].datetime.split(" ");
